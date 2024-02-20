@@ -22,15 +22,15 @@ class Writer(object):
             os.mkdir(output_path)
 
         file_name = f'{output_path}/{category}_{article_category}_{self.start_year}{self.start_month}{self.start_day}_{self.end_year}{self.end_month}{self.end_day}.csv'
-        if os.path.isfile(file_name) and os.path.getsize(file_name) != 0:
+        if os.path.isfile(file_name):
             raise ExistFile(file_name)
 
         user_os = str(platform.system())
-        if user_os == "Windows":
-            self.file = open(file_name, 'w', encoding='euc-kr', newline='')
+        #if user_os == "Windows":
+        #    self.file = open(file_name, 'w', encoding='euc-kr', newline='')
         # Other OS uses utf-8
-        else:
-            self.file = open(file_name, 'w', encoding='utf-8', newline='')
+        #else:
+        self.file = open(file_name, 'w', encoding='utf-8', newline='')
 
     def write_row(self, arg):
         self.csv_writer.writerow(arg)

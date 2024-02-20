@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf-8, euc-kr -*-
+# -*- coding: utf-8 -*-
 
 import os
 import platform
@@ -128,7 +128,7 @@ class ArticleCrawler(object):
         remaining_tries = int(max_tries)
         while remaining_tries > 0:
             try:
-                return requests.get(url, headers={'User-Agent':'Mozilla/5.0'})
+                return requests.get(url, headers={'user-agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'})
             except requests.exceptions:
                 sleep(1)
             remaining_tries = remaining_tries - 1
@@ -146,6 +146,7 @@ class ArticleCrawler(object):
         print(f'{category_name} Urls are generated')
 
         print(f'{category_name} is collecting ...')
+        writer.write_row(['일자', '네이버 카테고리', '신문사', '기사제목', '기사 원문', '기사 링크'])
         for url in target_urls:
             request = self.get_url_data(url)
             document = BeautifulSoup(request.content, 'html.parser')
@@ -161,51 +162,61 @@ class ArticleCrawler(object):
                 # 해당되는 page에서 모든 기사들의 URL을 post_urls 리스트에 넣음
                 post_urls.append(line.a.get('href'))
             del temp_post
-
             for content_url in post_urls:  # 기사 url
                 # 크롤링 대기 시간
-                sleep(0.01)
-                
+                sleep(3)
                 # 기사 HTML 가져옴
                 request_content = self.get_url_data(content_url)
-
+                print(content_url)
                 try:
                     document_content = BeautifulSoup(request_content.content, 'html.parser')
                 except:
+                    print("document_content is failed")
                     continue
+
                 try:
-                    # 기사 제목 가져옴
-                    tag_headline = document_content.find_all('h2',  {'class': 'media_end_head_headline'})
+                    # 기사 제목 가져옴(find_all 진행 시 아무것도 없으면 빈 리스트 출력)
+                    tag_headline = document_content.find_all('h2', {'id': 'title_area'}, {'class': 'media_end_head_headline'})
+                    if len(tag_headline) == 0:
+                        tag_headline = document_content.find_all('h4', {'class': 'title'})
+                    if len(tag_headline) == 0: 
+                        tag_headline = document_content.find_all('h2', {'class': 'end_tit'})
+                    print(f"tag_headline : {tag_headline}")
                     # 뉴스 기사 제목 초기화
                     text_headline = ''
                     text_headline = text_headline + ArticleParser.clear_headline(str(tag_headline[0].find_all(text=True)))
                     # 공백일 경우 기사 제외 처리
                     if not text_headline:
+                        print("text_headline is blank")
                         continue
-                    #<div class="go_trans _article_content" id="dic_area">
 
                     # 기사 본문 가져옴
-                    tag_content = document_content.find_all('div', {'id': 'dic_area'})
+                    tag_content = document_content.find_all('div', {'id': 'newsct_article'})
                     # 뉴스 기사 본문 초기화
                     text_sentence = ''
                     text_sentence = text_sentence + ArticleParser.clear_content(str(tag_content[0].find_all(text=True)))
                     # 공백일 경우 기사 제외 처리
                     if not text_sentence:
+                        print("text_sentence is blank")
                         continue
 
                     # 기사 언론사 가져옴
-                    tag_content = document_content.find_all('meta', {'property': 'og:article:author'})
+                    tag_company = document_content.find_all('meta', {'name': 'twitter:creator'})
+                    print(f"tag_company: {tag_company}")
                     # 언론사 초기화
                     text_company = ''
-                    text_company = text_company + tag_content[0]['content'].split("|")[0]
+                    text_company = text_company + str(tag_company[0].get('content'))
 
                     # 공백일 경우 기사 제외 처리
                     if not text_company:
+                        print("text_company is blank")
                         continue
-                    
-                    # 기사 시간대 가져옴
-                    time = document_content.find_all('span',{'class':"media_end_head_info_datestamp_time _ARTICLE_DATE_TIME"})[0]['data-date-time']
 
+                    # 기사 시간대 가져옴
+                    #print(re.findall('<span class="media_end_head_info_datestamp_time _ARTICLE_DATE_TIME"(.*)</span>',request_content.text))
+                    time = re.findall('<span class="media_end_head_info_datestamp_time _ARTICLE_DATE_TIME"(.*)</span>',request_content.text)[0].split('>')[1].split(' ')[0]
+
+                    print(time)
                     # CSV 작성
                     writer.write_row([time, category_name, text_company, text_headline, text_sentence, content_url])
 
@@ -217,6 +228,7 @@ class ArticleCrawler(object):
 
                 # UnicodeEncodeError
                 except Exception as ex:
+                    print(f"Exception Occurred: {ex}")
                     del request_content, document_content
                     pass
         writer.close()
