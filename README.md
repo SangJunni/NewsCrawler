@@ -73,7 +73,7 @@ Spt_crawler.start()
   2017년 1월 ~ 2018년 4월 20일까지 한국야구, 한국축구 뉴스를 멀티프로세서를 이용하여 병렬 크롤링을 진행합니다.
   
 ## Results
- ![ex_screenshot](./img/article_result.png)
+ ![ex_screenshot](./img/article_result.PNG)
  ![ex_screenshot](./img/sport_resultimg.PNG)
  
  Colum A: 기사 날짜  
