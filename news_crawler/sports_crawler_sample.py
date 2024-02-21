@@ -1,4 +1,4 @@
-from korea_news_crawler.sportcrawler import SportCrawler
+from news_crawler.sportcrawler import SportCrawler
 
 if __name__ == "__main__":
     Spt_crawler = SportCrawler()

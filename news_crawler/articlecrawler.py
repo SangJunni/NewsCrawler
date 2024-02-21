@@ -9,9 +9,9 @@ import re
 from time import sleep
 from bs4 import BeautifulSoup
 from multiprocessing import Process
-from korea_news_crawler.exceptions import *
-from korea_news_crawler.articleparser import ArticleParser
-from korea_news_crawler.writer import Writer
+from news_crawler.exceptions import *
+from news_crawler.articleparser import ArticleParser
+from news_crawler.writer import Writer
 
 class ArticleCrawler(object):
     def __init__(self):

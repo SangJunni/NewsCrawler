@@ -1,6 +1,6 @@
-__author__ = "lumyjuwon"
-__version__ = "1.50"
-__copyright__ = "Copyright (c) lumyjuwon"
+__author__ = "SangJunni"
+__version__ = "0.1"
+__copyright__ = "Copyright (c) SangJunni"
 __license__ = "MIT"
 
 from .articlecrawler import *

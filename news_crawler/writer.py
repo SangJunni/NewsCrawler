@@ -1,6 +1,6 @@
 import csv
 import platform
-from korea_news_crawler.exceptions import *
+from news_crawler.exceptions import *
 
 
 class Writer(object):

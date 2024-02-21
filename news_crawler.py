@@ -1,4 +1,4 @@
-from korea_news_crawler.articlecrawler import ArticleCrawler
+from news_crawler.articlecrawler import ArticleCrawler
 import urllib3
 from datetime import datetime, timedelta
 urllib3.disable_warnings()
