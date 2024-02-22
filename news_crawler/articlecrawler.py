@@ -192,6 +192,8 @@ class ArticleCrawler(object):
 
                     # 기사 본문 가져옴
                     tag_content = document_content.find_all('div', {'id': 'newsct_article'})
+                    if len(tag_content) == 0:
+                        tag_content = document_content.find_all('div', {'id': 'newsEndContents'})
                     # 뉴스 기사 본문 초기화
                     text_sentence = ''
                     text_sentence = text_sentence + ArticleParser.clear_content(str(tag_content[0].find_all(text=True)))
