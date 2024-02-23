@@ -204,6 +204,8 @@ class ArticleCrawler(object):
 
                     # 기사 언론사 가져옴
                     tag_company = document_content.find_all('meta', {'name': 'twitter:creator'})
+                    if len(tag_company) == 0:
+                        tag_company = document_content.find_all('meta', {'property': 'og:article:author'})
                     print(f"tag_company: {tag_company}")
                     # 언론사 초기화
                     text_company = ''
@@ -216,7 +218,11 @@ class ArticleCrawler(object):
 
                     # 기사 시간대 가져옴
                     #print(re.findall('<span class="media_end_head_info_datestamp_time _ARTICLE_DATE_TIME"(.*)</span>',request_content.text))
-                    time = re.findall('<span class="media_end_head_info_datestamp_time _ARTICLE_DATE_TIME"(.*)</span>',request_content.text)[0].split('>')[1].split(' ')[0]
+                    time = re.findall('<span class="media_end_head_info_datestamp_time _ARTICLE_DATE_TIME"(.*)</span>',request_content.text)
+                    if len(time != 0):
+                        time = time[0].split('>')[1].split(' ')[0]
+                    else:
+                        time = request_content.find('div', {'class': 'info'}).find('span').get_text().split()[1]
 
                     print(time)
                     # CSV 작성
